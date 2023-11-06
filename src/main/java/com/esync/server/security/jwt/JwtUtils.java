@@ -36,7 +36,7 @@ public class JwtUtils {
     }
 
     private Key key() {
-        logger.info(jwtSecret);
+//        logger.info(jwtSecret);
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 

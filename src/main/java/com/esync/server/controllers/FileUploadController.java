@@ -1,8 +1,6 @@
 package com.esync.server.controllers;
 
-import java.io.IOException;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,20 +15,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.esync.server.storage.StorageFileNotFoundException;
 import com.esync.server.storage.StorageService;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("api/file/upload")
-
+@RequestMapping("/api/upload")
 public class FileUploadController {
-
     private final StorageService storageService;
-
     @Autowired
     public FileUploadController(StorageService storageService) {
         this.storageService = storageService;
     }
 
     @GetMapping("/")
-    public String listUploadedFiles(Model model) throws IOException {
+    public String listUploadedFiles(Model model) {
 
         model.addAttribute("files", storageService.loadAll().map(
                         path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
@@ -53,8 +49,7 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PostMapping("/")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DEV')")
+    @PostMapping("/file")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
         storageService.store(file);
