@@ -29,8 +29,8 @@ import com.esync.server.repository.UserRepository;
 import com.esync.server.security.jwt.JwtUtils;
 import com.esync.server.security.services.UserDetailsImpl;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600, allowedHeaders = "*")
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired

@@ -1,22 +1,23 @@
 package com.esync.server.controllers;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esync.server.storage.StorageFileNotFoundException;
 import com.esync.server.storage.StorageService;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
 @RequestMapping("/api/upload")
 public class FileUploadController {
     private final StorageService storageService;
@@ -50,15 +51,13 @@ public class FileUploadController {
     }
 
     @PostMapping("/file")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException, IOException {
         storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
+        return "You successfully uploaded " + file.getOriginalFilename() + "!";
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
